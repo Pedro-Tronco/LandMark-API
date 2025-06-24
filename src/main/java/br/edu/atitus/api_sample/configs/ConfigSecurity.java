@@ -2,7 +2,7 @@ package br.edu.atitus.api_sample.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,9 +19,10 @@ public class ConfigSecurity {
 	
 	@Bean
 	SecurityFilterChain getSecurity(HttpSecurity http, AuthTokenFilter filter) throws Exception {
-		http.csrf(abobrinha -> abobrinha.disable())
-		.sessionManagement(atatab -> atatab.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		http.csrf(csrf -> csrf.disable())
+		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.authorizeHttpRequests(auth -> auth
+				.requestMatchers(HttpMethod.OPTIONS).permitAll()
 				.requestMatchers("/ws**", "/ws/*").authenticated()
 				.anyRequest().permitAll())
 		.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);

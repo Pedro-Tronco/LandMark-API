@@ -30,10 +30,10 @@ public class PointService {
 		if(point.getDescription() == null || point.getDescription().isEmpty())
 			throw new Exception("Descrição do ponto não pode ser vazia!");
 		
-		if(!(point.getLatitude() >= -90 && point.getLatitude() <= 90))
+		if(!(point.getLat() >= -90 && point.getLat() <= 90))
 			throw new Exception("Latitude deve estar entre -90 e 90!");
 		
-		if(!(point.getLongitude() >= -180 && point.getLongitude() <= 180))
+		if(!(point.getLng() >= -180 && point.getLng() <= 180))
 			throw new Exception("Longitude deve estar entre -180 e 180!");
 		
 		UserEntity userAuth = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -54,8 +54,36 @@ public class PointService {
 		
 		repository.deleteById(id);
 	}
+	
 	public List<PointEntity> findAll() {
 		UserEntity userAuth = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		return repository.findByUser(userAuth);
+	}
+	
+	public PointEntity alterById(UUID id, double lat, double lng, String description) throws Exception{
+		
+		var point = repository.findById(id)
+				.orElseThrow(() -> new Exception("Não existe ponto cadastrado com este ID"));
+		
+		UserEntity userAuth = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if (!point.getUser().getId().equals(userAuth.getId()))
+			throw new Exception("Você não tem permissão para alterar este registro");
+		
+		if(point.getDescription() == null || point.getDescription().isEmpty())
+			throw new Exception("Descrição do ponto não pode ser vazia!");
+		
+		if(!(point.getLat() >= -90 && point.getLat() <= 90))
+			throw new Exception("Latitude deve estar entre -90 e 90!");
+		
+		if(!(point.getLng() >= -180 && point.getLng() <= 180))
+			throw new Exception("Longitude deve estar entre -180 e 180!");
+		
+		point.setDescription(description);
+		point.setLat(lat);
+		point.setLng(lng);
+		repository.save(point);
+		
+		return point;	
 	}
 }

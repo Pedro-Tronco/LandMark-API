@@ -17,38 +17,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.edu.atitus.api_sample.dtos.PointDTO;
-import br.edu.atitus.api_sample.entities.PointEntity;
+import br.edu.atitus.api_sample.dtos.NodeDTO;
+import br.edu.atitus.api_sample.entities.NodeEntity;
 import br.edu.atitus.api_sample.services.NodeService;
-import br.edu.atitus.api_sample.services.PointService;
 
 @RestController
-@RequestMapping("/ws/point")
-public class PointController {
-	private PointService service;
-	private NodeService nodeService;
+@RequestMapping("/ws/node")
+public class NodeController {
+	private final NodeService service;
 	
-	public PointController(PointService service, NodeService nodeService) {
+	public NodeController (NodeService service) {
 		super();
 		this.service = service;
-		this.nodeService = nodeService;
-	}
-	
-	@GetMapping()
-	public ResponseEntity<List<PointEntity>> findAll() {
-		return ResponseEntity.ok().body(service.findAll());
 	}
 	
 	@PostMapping()
-	public ResponseEntity<PointEntity> postPoint(@RequestBody PointDTO dto) throws Exception {
-		PointEntity point = new PointEntity();
-		BeanUtils.copyProperties(dto, point);
-		service.save(point);
-		return ResponseEntity.status(HttpStatus.CREATED).body(point);
+	public ResponseEntity<NodeEntity> postNode(@RequestBody NodeDTO dto) throws Exception {
+		NodeEntity node = new NodeEntity();
+		BeanUtils.copyProperties(dto, node);
+		service.save(node);
+		return ResponseEntity.status(HttpStatus.CREATED).body(node);
+	}
+	
+	@GetMapping("/{idPath}")
+	public ResponseEntity<List<NodeEntity>> getByPointId(
+			@RequestParam(required = false) UUID id,
+			@PathVariable(required = false) UUID idPath
+			) throws Exception {
+		
+		if (idPath == null)
+			throw new Exception("O caminho deve especificar um id de ponto seu guei");
+		id = idPath;
+		return ResponseEntity.ok().body(service.findByPointId(id));
 	}
 	
 	@DeleteMapping("/{idPath}")
-	public ResponseEntity<String> deletePoint(
+	public ResponseEntity<String> deleteNode(
 			@RequestParam(required = false) UUID id,
 			@PathVariable(required = false) UUID idPath
 			) throws Exception {
@@ -56,24 +60,23 @@ public class PointController {
 		if (idPath == null)
 				throw new Exception("O caminho deve especificar um id de ponto seu guei");
 		id = idPath;
-		nodeService.deleteByPointId(id);
 		service.deleteById(id);
-		return ResponseEntity.ok().body("Ponto " + id + " deletado com sucesso!");
+		return ResponseEntity.ok().body("Node " + id + " deletado com sucesso!");
 	} 
 	
 	@PutMapping("/{idPath}")
-	public ResponseEntity<PointEntity> putPoint(
+	public ResponseEntity<NodeEntity> putNode(
 			@RequestParam(required = false) UUID id,
 			@PathVariable(required = false) UUID idPath,
-			@RequestBody PointDTO dto
+			@RequestBody NodeDTO dto
 			) throws Exception {
 		if (idPath == null)
 			throw new Exception("O caminho deve especificar um id de ponto seu guei");
 		id = idPath;
 		
-		PointEntity point = service.alterById(id, dto.lat(), dto.lng(), dto.description());
+		NodeEntity node = service.alterById(id, dto.lat(), dto.lng());
 		
-		return ResponseEntity.ok().body(point);
+		return ResponseEntity.ok().body(node);
 	}
 	
 	@ExceptionHandler(value = Exception.class)
