@@ -61,7 +61,7 @@ public class NodeService {
 				.orElseThrow(() -> new Exception("Não existe node cadastrado com este ID"));
 		
 		UserEntity userAuth = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (pointRepo.findByUser(userAuth).isEmpty())
+		if (!point.getUser().getId().equals(userAuth.getId()))
 			throw new Exception("Você não tem permissão para alterar este registro");
 		
 		repository.deleteById(node.getId());
