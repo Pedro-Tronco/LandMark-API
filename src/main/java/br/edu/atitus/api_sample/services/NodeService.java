@@ -60,9 +60,7 @@ public class NodeService {
 		var node = repository.findById(id)
 				.orElseThrow(() -> new Exception("Não existe node cadastrado com este ID"));
 		
-		UserEntity userAuth = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (!node.getPoint().getUser().equals(userAuth))
-			throw new Exception("Você não tem permissão para apagar este registro");
+		//TODO: Add User Auth
 		
 		repository.deleteById(node.getId());
 	}
@@ -87,9 +85,7 @@ public class NodeService {
 		var node = repository.findById(id)
 				.orElseThrow(() -> new Exception("Não existe node cadastrado com este ID"));
 		
-		UserEntity userAuth = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (!node.getPoint().getUser().equals(userAuth))
-			throw new Exception("Você não tem permissão para editar este registro");
+		//TODO: Add User Auth
 		
 		if(!(node.getLat() >= -90 && node.getLat() <= 90))
 			throw new Exception("Latitude deve estar entre -90 e 90!");
