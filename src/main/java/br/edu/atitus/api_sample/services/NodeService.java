@@ -80,7 +80,6 @@ public class NodeService {
 			UUID id = node.getId();
 			repository.deleteById(id);
 		}
-	
 	}
 	
 	public NodeEntity alterById(UUID id, double lat, double lng) throws Exception{
