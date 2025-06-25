@@ -37,9 +37,7 @@ public class NodeService {
 		if(!(node.getLng() >= -180 && node.getLng() <= 180))
 			throw new Exception("Longitude deve estar entre -180 e 180!");
 		
-		UserEntity userAuth = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (pointRepo.findByUser(userAuth).isEmpty())
-			throw new Exception("Você não tem permissão para alterar este registro");
+		//TODO: Add User Auth
 		
 		return repository.save(node);
 	}
@@ -68,13 +66,10 @@ public class NodeService {
 	@Transactional
 	public void deleteByPointId(UUID pointId) throws Exception {
 		List<NodeEntity> nodes = repository.findByPointId(pointId);
-		
-		UserEntity userAuth = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+		//TODO: Add User Auth
 		
 		for (NodeEntity node : nodes) {
-			if (!node.getPoint().getUser().equals(userAuth))
-				throw new Exception("Você não tem permissão para apagar este registro");
-		
 			UUID id = node.getId();
 			repository.deleteById(id);
 		}
