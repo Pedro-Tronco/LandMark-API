@@ -61,8 +61,8 @@ public class NodeService {
 				.orElseThrow(() -> new Exception("Não existe node cadastrado com este ID"));
 		
 		UserEntity userAuth = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (pointRepo.findByUser(userAuth).isEmpty())
-			throw new Exception("Você não tem permissão para alterar este registro");
+		if (!node.getPoint().getUser().getId().equals(userAuth.getId()))
+			throw new Exception("Você não tem permissão para apagar este registro");
 		
 		repository.deleteById(node.getId());
 	}
@@ -88,8 +88,8 @@ public class NodeService {
 				.orElseThrow(() -> new Exception("Não existe node cadastrado com este ID"));
 		
 		UserEntity userAuth = (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		if (pointRepo.findByUser(userAuth).isEmpty())
-			throw new Exception("Você não tem permissão para alterar este registro");
+		if (!node.getPoint().getUser().getId().equals(userAuth.getId()))
+			throw new Exception("Você não tem permissão para apagar este registro");
 		
 		if(!(node.getLat() >= -90 && node.getLat() <= 90))
 			throw new Exception("Latitude deve estar entre -90 e 90!");
