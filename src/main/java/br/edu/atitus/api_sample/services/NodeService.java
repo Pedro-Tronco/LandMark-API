@@ -81,7 +81,7 @@ public class NodeService {
 			repository.deleteById(id);
 		}
 	}
-	
+
 	public NodeEntity alterById(UUID id, double lat, double lng) throws Exception{
 		
 		var node = repository.findById(id)
