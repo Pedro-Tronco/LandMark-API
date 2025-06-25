@@ -23,7 +23,7 @@ public class NodeEntity {
 	private UUID id;
 	
 	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "point_id")
 	private PointEntity point;
 	
